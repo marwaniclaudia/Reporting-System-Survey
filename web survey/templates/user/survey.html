@@ -1,0 +1,27 @@
+{% extends 'user/base.html' %}
+
+{% block content %}
+<div class="text-center display-4">{{title}}</div>
+{% if not login %}<div class="text-center h4 text-danger">login untuk memulai survey</div>{% endif %}
+<div class="container">
+  <div class="row justify-content-center">
+    {% for s in survey %}
+    <div class="col-md-4 text-center">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{s.name}}</h5>
+          <div class="btn btn-outline-primary disabled"><i class="fas fa-question me-2"></i>{{s.pertanyaan}}</div>
+          <div class="btn btn-outline-primary disabled"><i class="fas fa-user me-2"></i>{{s.responde}}</div>
+          <hr>
+          {% if s.finish %}
+          <a href="start/{{s.id}}" class="btn btn-primary"><i class="fas fa-pencil me-2"></i>edit jawaban</a>
+          {% else %}
+          <a href="start/{{s.id}}" class="btn btn-primary {% if not login %} disabled {% endif %}">Mulai survey</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock content %}

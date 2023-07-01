@@ -1,0 +1,108 @@
+{% extends 'user/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center pt-5">
+  <div class="col-md-3">
+    <form action="" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="d-flex justify-content-center">
+        <div class="drop-zone pt-5">
+          <span class="drop-zone__prompt">Klik atau Drop file CSV disini</span>
+          <input type="file" name="csv" class="drop-zone__input" />
+        </div>
+      </div>
+      <div class="d-grid gap-2 px-3 mt-3">
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Simpan</button>
+      </div>
+    </form>
+    
+  </div>
+  <div class="col-md-7">
+    <table id="table_csv" class="display">
+      <thead>
+        <tr class="text-center">
+          <th>Nama</th>
+          <th>tanggal</th>
+          <th>parse</th>
+          <th>action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in csvvalue %}
+        <tr class="text-center">
+          <td>{{s.nama}}</td>
+          <td>{{s.tanggal}}</td>
+          <td>
+            {% if s.parse %}
+            parsed
+            {% else %}
+            <a href="?parse=ya&id={{s.id}}" class="btn btn-warning me-2"><i class="fas fa-refresh"></i>parse</a>
+            {% endif %}
+          </td>
+          <td>
+            <a href="?parse=gak&id={{s.id}}" class="btn btn-warning me-2"><i class="fas fa-eye"></i>Lihat</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  </div>
+
+  <div class="d-flex justify-content-center">
+    <div id="cloud"></div>
+  </div>
+  {% for y in value %}
+    <div style="display: none;">
+      <div class="valueName">{{y.name}}</div>
+      <div class="valueSize">{{y.size}}</div>
+    </div>
+  {% endfor %}
+  <div class="row justify-content-center">
+    <div class="col-10">
+      <canvas id="all-chart" data-url="../jsonchart/{{get}}"></canvas>
+    </div>
+  </div>
+  
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+  <script>
+  
+    $(function () {
+  
+      var $populationChart = $("#all-chart");
+      $.ajax({
+        url: $populationChart.data("url"),
+        success: function (data) {
+  
+          var ctx = $populationChart[0].getContext("2d");
+  
+          new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: data.labels,
+              datasets: [{
+                label: 'Survey chart',
+                backgroundColor: 'blue',
+                data: data.data
+              }]          
+            },
+            options: {
+              responsive: true,
+              legend: {
+                position: 'top',
+              },
+              title: {
+                display: true,
+                text: 'Survey'
+              }
+            }
+          });
+  
+        }
+      });
+  
+    });
+  
+  </script>
+{% endblock content %}

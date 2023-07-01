@@ -1,0 +1,62 @@
+{% extends 'admin/baseadmin.html' %} {% block content %}
+<div class="text-center display-5 my-5">{{respon.0.value.name}}</div>
+<div class="row justify-content-center">
+  <div class="col-md-5">
+    <div id="container">
+        <canvas id="pie-chart"></canvas>
+      </div>
+  </div>
+  <div class="col-md-5">
+
+    <table class="table" id="tabledetail">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Nama</th>
+          <th scope="col">Jenis Kelamin</th>
+          <th scope="col">Umur</th>
+          <th scope="col">Jawaban</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in respon %}
+        <tr>
+          <th scope="row">{{ forloop.counter }}</th>
+          <td>{{r.respond.user.name}}</td>
+          <td>{{r.respond.user.sex}}</td>
+          <td>{{r.respond.user.age}}</td>
+          <td>{{r.answer.name}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+      
+  </div>
+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+  <script>
+
+    var config = {
+      type: 'pie',
+      data: {
+        datasets: [{
+          data: {{ data|safe }},
+          backgroundColor: ['#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'],
+          label: 'Population'
+        }],
+        labels: {{ labels|safe }}
+      },
+      options: {
+        responsive: true
+      }
+    };
+
+    window.onload = function() {
+      var ctx = document.getElementById('pie-chart').getContext('2d');
+      window.myPie = new Chart(ctx, config);
+    };
+
+  </script>
+
+{% endblock content %}

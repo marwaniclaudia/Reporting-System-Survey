@@ -1,0 +1,116 @@
+{% extends 'admin/baseadmin.html' %} {% block content %}
+<div class="row justify-content-center mt-5 pt-5">
+  <div class="col-md-10">
+    <table id="table_id" class="display">
+      <thead>
+        <tr>
+          <th>Nama</th>
+          <th>Pertanyaan</th>
+          <th>Responden</th>
+          <th>Berlangsung</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in survey %}
+        <tr class="text-center">
+          <td>{{s.name}}</td>
+          <td>{{s.pertanyaan}}</td>
+          <td>{{s.responde}}</td>
+          <td>
+            {% if s.berlangsung %} <i class="fas fa-check text-primary"></i>{% endif %}
+          </td>
+          <td>
+            <div class="btn-group" role="group">
+              <a href="edit/{{s.id}}" class="btn btn-success btn-sm">
+                <i class="fas fa-pencil"></i
+              ></a>
+              <a href="#" class="btn btn-success btn-sm">
+                <i class="fas fa-eye"></i
+              ></a>
+              <a href="delete/survey/{{s.id}}" class="btn btn-danger btn-sm">
+                <i class="fas fa-trash"></i
+              ></a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="row justify-content-end mt-5">
+  <div class="col-md-2">
+    <a href="#" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#add"><i class="fas fa-plus me-2"></i> Tambah</a>
+  </div>
+</div>
+
+<!-- Add -->
+<div class="modal fade" id="add" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addModalLabel">Tambah Pertanyaan</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="" method="post">
+        {% csrf_token %}
+        <div class="modal-body">
+          <input type="text" name="nama" id="nama" class="form-control">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">tutup</button>
+          <input type="submit" class="btn btn-primary" value="Tambah">
+        </div>
+      </form>
+      </div>
+  </div>
+</div>
+<div class="row justify-content-center">
+  <div class="col-10">
+    <canvas id="all-chart" data-url="{% url 'home:alljson' %}"></canvas>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+<script>
+
+  $(function () {
+
+    var $populationChart = $("#all-chart");
+    $.ajax({
+      url: $populationChart.data("url"),
+      success: function (data) {
+
+        var ctx = $populationChart[0].getContext("2d");
+
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: data.labels,
+            datasets: [{
+              label: 'Population',
+              backgroundColor: 'blue',
+              data: data.data
+            }]          
+          },
+          options: {
+            responsive: true,
+            legend: {
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: 'Population Bar Chart'
+            }
+          }
+        });
+
+      }
+    });
+
+  });
+
+</script>
+{% endblock content %}

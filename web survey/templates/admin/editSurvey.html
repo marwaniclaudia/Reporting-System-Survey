@@ -1,0 +1,166 @@
+{% extends 'admin/baseadmin.html' %} {% block content %}
+<div class="text-center display-4 mt-5">
+{{survey.name}}
+</div>
+<div class="row justify-content-center mt-5">
+  <div class="col-md-10">
+    <table id="table_id" class="display">
+      <thead>
+        <tr>
+          <th>Nama</th>
+          <th>Text</th>
+          <th>
+            <div class="d-flex align-items-center">
+              <p class="me-3">pilihan</p>
+              <a href="#" class="btn btn-primary btn-sm align-self-center"><i class="fas fa-plus"></i></a></th>
+            </div>
+          <th>Berlangsung</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in question %}
+        <tr class="text-center">
+          <td>{{s.name}} </td>
+          <td><input type="checkbox" name="isText" id="isText" {% if s.isText  %} checked {% endif %}></td>
+          <td>
+            <select class="form-select" aria-label="Default select example">
+              <option>Pilih salah satu</option>
+              {% for a in answer %}
+              <option value="{{a.id}}"  {% if a.id is s.value.id %} selected {% endif %}>{{a.name}}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <td>
+            {% if s.isText %} 
+            <a href="../detail/{{s.id}}" class="btn btn-primary btn-sm {% if not s.isfilled %} disabled {% endif %}"><i class="fas fa-eye me-2"></i> lihat</a>
+            {% else %}
+            <div class="progress">
+              <div class="progress-bar bg-danger" role="progressbar" aria-label="Segment one" style="width: {{s.respon.1}}%" aria-valuenow="{{s.respon.1}}" aria-valuemin="0" aria-valuemax="100">1</div>
+              <div class="progress-bar bg-warning" role="progressbar" aria-label="Segment two" style="width: {{s.respon.2}}%" aria-valuenow="{{s.respon.2}}" aria-valuemin="0" aria-valuemax="100">2</div>
+              <div class="progress-bar bg-grey" role="progressbar" aria-label="Segment three" style="width: {{s.respon.3}}%" aria-valuenow="{{s.respon.3}}" aria-valuemin="0" aria-valuemax="100">3</div>
+              <div class="progress-bar bg-info" role="progressbar" aria-label="Segment three" style="width: {{s.respon.4}}%" aria-valuenow="{{s.respon.4}}" aria-valuemin="0" aria-valuemax="100">4</div>
+              <div class="progress-bar bg-success" role="progressbar" aria-label="Segment three" style="width: {{s.respon.5}}%" aria-valuenow="{{s.respon.5}}" aria-valuemin="0" aria-valuemax="100">5</div>
+            </div>
+            {% endif %}
+
+          </td>
+          <td>
+            <div class="btn-group" role="group">
+              <a onclick="modalsurvey('{{s.id}}')" data-bs-toggle="modal" data-bs-target="#modaledit" class="btn btn-success btn-sm">
+                <i class="fas fa-pencil"></i
+              ></a>
+              <a href="../detail/{{s.id}}" class="btn btn-success btn-sm {% if not s.isfilled %} disabled {% endif %}">
+                <i class="fas fa-eye"></i
+              ></a>
+              <a href="delete/survey/{{s.id}}" class="btn btn-danger btn-sm">
+                <i class="fas fa-trash"></i
+              ></a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="row justify-content-end mt-5">
+  <div class="col-md-2">
+    <a href="#" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#add"><i class="fas fa-plus me-2"></i> Tambah</a>
+  </div>
+</div>
+
+<!-- Add -->
+<div class="modal fade" id="add" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addModalLabel">Tambah Pertanyaan</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="tambah">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="nama" class="form-label">Nama</label>
+            <input type="text" class="form-control" id="nama" name="name">
+          </div>
+          <div class="mb-3">
+            <label for="quest" class="form-label">Jawaban</label>
+            <select class="form-select" name="value" id="quest">
+              {% for a in answer %}
+              <option value="{{a.id}}">{{a.name}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="isText" name="isText">
+            <label class="form-check-label" for="isText">Text</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">tutup</button>
+          <input type="submit" class="btn btn-primary" value="Tambah">
+        </div>
+      </form>
+      </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modaledit" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addModalLabel">Edit Pertanyaan</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="edit">
+        <input type="hidden" name="id" id="idcheck">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="nama" class="form-label">Nama</label>
+            <input type="text" class="form-control" id="editnama" name="editnama">
+          </div>
+          <div class="mb-3">
+            <label for="quest" class="form-label">Jawaban</label>
+            <select class="form-select" name="editvalue" id="editquest">
+              {% for a in answer %}
+              <option value="{{a.id}}">{{a.name}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="editisText" name="editisText">
+            <label class="form-check-label" for="isText">Text</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">tutup</button>
+          <input type="submit" class="btn btn-primary" value="Update">
+        </div>
+      </form>
+      </div>
+  </div>
+</div>
+<script>
+  nama = document.getElementById('editnama');
+  quest = document.getElementById('editquest');
+  isText = document.getElementById('editisText');
+  idcheck = document.getElementById('idcheck');
+  function modalsurvey(id) {
+  const xhttp = new XMLHttpRequest();
+  xhttp.onload = function() {
+    text = JSON.parse(this.response);
+    nama.value = text['context']['name'];
+    quest.value = text['context']['valueid'];
+    isText.checked = text['context']['isText'];
+    idcheck.value = id;
+    }
+  xhttp.open("GET", "http://localhost:8000/editjson/"+id, true);
+  xhttp.send();
+}
+</script>
+{% endblock content %}

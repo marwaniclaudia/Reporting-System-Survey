@@ -1,0 +1,39 @@
+{% extends 'user/base.html' %}
+
+{% block content %}
+<div class="text-center display-6 mt-5 mb-3">
+    {{survey.name}}
+</div>
+<div class="row justify-content-start">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+        <form action="" method="post">
+            {% csrf_token %}
+            {% for q in question %}
+            {% if q.text %}
+            <div class="mb-3">
+                <label for="text{{q.id}}" class="form-label"><h5> {{ forloop.counter }}. {{q.name}}</h5></label>
+                <textarea class="form-control" name="text{{q.id}}" id="text{{q.id}}" rows="3"></textarea>
+            </div>
+            {% else %}
+            <h5> {{ forloop.counter }}. {{q.name}}</h5>
+            <div class="d-flex ms-5 mb-5">
+                {% for a in q.answer %}
+                <div class="form-check me-3">
+                    <input class="form-check-input" type="radio" required name="answer{{q.id}}" id="{{q.id}}{{a.id}}" value="{{a.id}}">
+                    <label class="form-check-label" for="{{q.id}}{{a.id}}">
+                        {{a.name}}
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <hr>
+            {% endfor %}
+            <div class="d-grid gap-2">
+                <input type="submit" value="Kirim" class="btn btn-success">
+              </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}
